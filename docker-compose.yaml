@@ -1,0 +1,72 @@
+volumes:
+  account_db:
+    driver: local
+  transaction_db:
+    driver: local
+  jetstream:
+    driver: local
+services:
+  ## Tools
+  adminer:
+    image: adminer
+  ingress:
+    image: nginx:1.25
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates
+      - ./certs:/etc/nginx/certs
+    ports:
+      - '80:80'
+      - '443:443'
+  ## Event Bus
+  nats:
+    image: nats
+    command: ['-js', '--config', '/etc/nats/nats.conf']
+    volumes:
+      - ./nats/nats.conf:/etc/nats/nats.conf
+      - jetstream:/data
+  box:
+    image: natsio/nats-box
+    volumes:
+      - ./nats/nsc:/nsc
+  ## Databases
+  account_db:
+    image: postgres:16
+    volumes:
+      - account_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'app'
+      POSTGRES_DB: 'app'
+      POSTGRES_PASSWORD: 'password'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+  transaction_db:
+    image: postgres:16
+    volumes:
+      - transaction_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'app'
+      POSTGRES_DB: 'app'
+      POSTGRES_PASSWORD: 'password'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+  ## Services
+  account:
+    image: node:20-alpine
+    depends_on:
+      - account_db
+      - nats
+    env_file:
+      - ./services/account/.env.local
+    working_dir: /app
+    command: sh -c "npm -w account run start:dev"
+    volumes:
+      - ./:/app
+  transaction:
+    image: node:20-alpine
+    depends_on:
+      - transaction_db
+      - nats
+    env_file:
+      - ./services/transaction/.env.local
+    working_dir: /app
+    command: sh -c "npm -w transaction run start:dev"
+    volumes:
+      - ./:/app

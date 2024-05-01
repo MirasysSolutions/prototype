@@ -1,0 +1,23 @@
+server {
+  listen       80;
+  listen  [::]:80;
+
+  listen       443 ssl;
+  listen  [::]:443 ssl;
+
+  server_name adminer.local.harrytang.com;
+  
+  ssl_certificate     /etc/nginx/certs/tls.crt;
+  ssl_certificate_key /etc/nginx/certs/tls.key;
+
+  # Specify a resolver (Docker's default DNS server)
+  resolver 127.0.0.11 valid=30s;
+
+  # Define a variable for the upstream service
+  set $upstream adminer:8080;
+
+  location / {
+    # Use the variable in the proxy_pass
+    proxy_pass  http://$upstream;
+  }
+}

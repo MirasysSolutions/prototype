@@ -1,0 +1,22 @@
+server {
+  listen       80;
+  listen  [::]:80;
+
+  #listen       443 ssl;
+  #listen  [::]:443 ssl;    
+    
+  server_name  local.harrytang.com;
+  
+  #ssl_certificate     /etc/nginx/ssl/cert.pem;
+  #ssl_certificate_key /etc/nginx/ssl/key.pem;    
+
+  location / {
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+  }
+
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
+}

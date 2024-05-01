@@ -1,0 +1,6 @@
+.nx
+certs
+nats
+node_modules
+dist
+.env.local
