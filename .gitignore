@@ -1,6 +1,11 @@
 .nx
-certs
-nats
+.certs
+.nats-conf
+.nats-box
+.nx/cache
+.jetstream
+.env.local
+.creds
+.infra
 node_modules
 dist
-.env.local

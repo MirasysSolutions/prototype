@@ -3,8 +3,6 @@ volumes:
     driver: local
   transaction_db:
     driver: local
-  jetstream:
-    driver: local
 services:
   ## Tools
   adminer:
@@ -13,7 +11,7 @@ services:
     image: nginx:1.25
     volumes:
       - ./nginx/templates:/etc/nginx/templates
-      - ./certs:/etc/nginx/certs
+      - ./.certs/nginx:/etc/nginx/certs
     ports:
       - '80:80'
       - '443:443'
@@ -22,12 +20,16 @@ services:
     image: nats
     command: ['-js', '--config', '/etc/nats/nats.conf']
     volumes:
-      - ./nats/nats.conf:/etc/nats/nats.conf
-      - jetstream:/data
+      - ./.nats-conf/nats.conf:/etc/nats/nats.conf
+      - ./.jetstream:/data
+      - ./.certs/nats:/etc/nats-certs/nats
   box:
     image: natsio/nats-box
+    env_file:
+      - ./.nats-box/.env
     volumes:
-      - ./nats/nsc:/nsc
+      - ./.nats-box/nsc:/nsc
+      - ./.certs/k8s:/etc/nats-certs/nats
   ## Databases
   account_db:
     image: postgres:16
@@ -49,7 +51,10 @@ services:
       PGDATA: '/var/lib/postgresql/data/pgdata'
   ## Services
   account:
-    image: node:20-alpine
+    image: giaduy/account:demo
+    build:
+      context: .
+      dockerfile: ./services/account/Dockerfile
     depends_on:
       - account_db
       - nats
@@ -59,8 +64,13 @@ services:
     command: sh -c "npm -w account run start:dev"
     volumes:
       - ./:/app
+      - ./.certs/k8s:/etc/nats-certs/nats
+      - ./.creds:/etc/nats-creds
   transaction:
-    image: node:20-alpine
+    image: giaduy/transaction:demo
+    build:
+      context: .
+      dockerfile: ./services/transaction/Dockerfile
     depends_on:
       - transaction_db
       - nats
@@ -70,3 +80,5 @@ services:
     command: sh -c "npm -w transaction run start:dev"
     volumes:
       - ./:/app
+      - ./.certs/k8s:/etc/nats-certs/nats
+      - ./.creds:/etc/nats-creds

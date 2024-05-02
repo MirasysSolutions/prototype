@@ -26,3 +26,10 @@ Import JetStream
 ```bash
 nats stream add --config FILE_NAME.json
 ```
+
+## Build
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -f services/account/Dockerfile -t giaduy/account:demo . --push
+docker buildx build --platform linux/amd64,linux/arm64 -f services/transaction/Dockerfile -t giaduy/transaction:demo . --push
+```

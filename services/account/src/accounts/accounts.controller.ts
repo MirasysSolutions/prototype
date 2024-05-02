@@ -52,7 +52,7 @@ export class AccountsController {
     @Payload() event: TransactionCreatedEvent,
     @Ctx() context: JsMsg,
   ) {
-    console.log('Event received: ', event);
+    console.info('Event received', event);
     // upadte account balance
     const account = await this.accountsService.findOne(
       event.data.accountNumber,

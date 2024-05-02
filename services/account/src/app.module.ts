@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { AccountsModule } from './accounts/accounts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './ormconfig';
-import { NatsModule } from 'common';
+import { NatsModule } from './nats/nats.module';
 
 @Module({
   imports: [

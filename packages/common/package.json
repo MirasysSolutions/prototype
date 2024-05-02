@@ -14,7 +14,7 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "build": "tsc"
+    "build": "rm -rf lib && tsc"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.8",

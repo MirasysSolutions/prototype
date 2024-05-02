@@ -5,7 +5,7 @@ class TransactionCreatedPublisher extends EventPublisher<TransactionCreatedEvent
     Topics.TransactionCreated;
 
   async publish(event: TransactionCreatedEvent): Promise<void> {
-    console.info(`publishing ${Topics.TransactionCreated} event:`, event);
+    console.info('publishing event', event);
     await this.client.publish(
       this.topic,
       JSON.stringify({
