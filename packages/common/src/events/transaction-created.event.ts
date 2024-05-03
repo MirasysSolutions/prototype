@@ -11,4 +11,5 @@ interface TransactionCreatedEvent {
   };
   data: TransactionCreatedData;
 }
+
 export { TransactionCreatedEvent, TransactionCreatedData };

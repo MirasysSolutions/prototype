@@ -1,6 +1,9 @@
-import { Length, IsDecimal } from 'class-validator';
+import { Length, IsDecimal, IsUUID } from 'class-validator';
 
 export class CreateTransactionDto {
+  @IsUUID()
+  id: string;
+
   @Length(1, 255)
   accountNumber: string;
 

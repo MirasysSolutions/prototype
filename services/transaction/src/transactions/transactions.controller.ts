@@ -10,6 +10,13 @@ import {
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { Ctx, EventPattern, Payload } from '@nestjs/microservices';
+import { JsMsg } from 'nats';
+import {
+  LegacyTransactionCreatedEvent,
+  LegacyTransactionUpdatedEvent,
+  TransactionSyncEvent,
+} from 'common';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -41,5 +48,52 @@ export class TransactionsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.transactionsService.remove(id);
+  }
+
+  @EventPattern('transaction.sync')
+  async handleTransactionSyncEvent(
+    @Payload() event: TransactionSyncEvent,
+    @Ctx() context: JsMsg,
+  ) {
+    console.info('Event received', event);
+    // sync transaction
+    await this.transactionsService.sync({
+      id: event.data.id,
+      accountNumber: event.data.accountNumber,
+      amount: event.data.amount,
+      date: event.data.date,
+      note: event.data.note,
+      version: event.data.version,
+    });
+    context.ack();
+  }
+
+  @EventPattern('legacyTransaction.created')
+  async handleLegacyTransactionCreatedEvent(
+    @Payload() event: LegacyTransactionCreatedEvent,
+    @Ctx() context: JsMsg,
+  ) {
+    console.info('Event received', event);
+    // create new bank account
+    await this.transactionsService.create({
+      id: event.data.id,
+      accountNumber: event.data.accountNumber,
+      amount: event.data.amount,
+      note: event.data.note,
+    });
+    context.ack();
+  }
+
+  @EventPattern('legacyTransaction.updated')
+  async handleLegacyTransactionUpdatedEvent(
+    @Payload() event: LegacyTransactionUpdatedEvent,
+    @Ctx() context: JsMsg,
+  ) {
+    console.info('Event received', event);
+    await this.transactionsService.update(event.data.id, {
+      note: event.data.note,
+      version: event.data.version - 1,
+    });
+    context.ack();
   }
 }

@@ -1,4 +1,4 @@
-import { Length, IsDecimal } from 'class-validator';
+import { Length, IsDecimal, IsNumber } from 'class-validator';
 
 export class UpdateAccountDto {
   @Length(1, 255)
@@ -15,4 +15,7 @@ export class UpdateAccountDto {
 
   @IsDecimal()
   balance?: number;
+
+  @IsNumber()
+  version: number;
 }

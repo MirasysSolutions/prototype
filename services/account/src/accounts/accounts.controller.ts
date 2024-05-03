@@ -13,6 +13,8 @@ import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { TransactionCreatedEvent } from 'common';
+import { LegacyAccountCreatedEvent } from 'common';
+import { version } from 'os';
 
 @Controller('accounts')
 export class AccountsController {
@@ -60,6 +62,57 @@ export class AccountsController {
     const newBalance = account.balance + event.data.amount;
     await this.accountsService.update(event.data.accountNumber, {
       balance: newBalance,
+      version: account.version,
+    });
+    context.ack();
+  }
+
+  @EventPattern('legacyAccount.created')
+  async handleLegacyAccountCreatedEvent(
+    @Payload() event: LegacyAccountCreatedEvent,
+    @Ctx() context: JsMsg,
+  ) {
+    console.info('Event received', event);
+    // create new bank account
+    await this.accountsService.create({
+      accountNumber: event.data.accountNumber,
+      balance: event.data.balance,
+      holderAddress: event.data.holderAddress,
+      holderName: event.data.holderName,
+      holderPhone: event.data.holderPhone,
+      holderCountry: event.data.holderCountry,
+    });
+    context.ack();
+  }
+
+  @EventPattern('legacyAccount.updated')
+  async handleLegacyAccountUpdatedEvent(
+    @Payload() event: LegacyAccountCreatedEvent,
+    @Ctx() context: JsMsg,
+  ) {
+    console.info('Event received', event);
+    // update bank account
+    await this.accountsService.update(event.data.accountNumber, {
+      holderAddress: event.data.holderAddress,
+      holderName: event.data.holderName,
+      holderPhone: event.data.holderPhone,
+      holderCountry: event.data.holderCountry,
+      version: event.data.version - 1, // new version need to be one less than the current version
+    });
+    context.ack();
+  }
+
+  @EventPattern('account.sync')
+  async handleAccountSyncEvent(@Payload() event: any, @Ctx() context: JsMsg) {
+    console.info('Event received', event);
+    // sync account
+    await this.accountsService.sync({
+      accountNumber: event.data.accountNumber,
+      holderAddress: event.data.holderAddress,
+      holderName: event.data.holderName,
+      holderPhone: event.data.holderPhone,
+      holderCountry: event.data.holderCountry,
+      version: event.data.version,
     });
     context.ack();
   }

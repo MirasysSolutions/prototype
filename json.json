@@ -1,0 +1,11 @@
+{
+  "metadata": { "name": "legacyTransaction.created" },
+  "data": {
+    "id": "269c474b-17bf-4a29-81d0-13a28ca43710",
+    "accountNumber": "FI1230002",
+    "amount": 10,
+    "date": "2024-05-03T07:36:08.045Z",
+    "note": "added note",
+    "version": 0
+  }
+}

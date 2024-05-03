@@ -6,7 +6,7 @@ export class Account extends ObservableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   accountNumber: string;
 
   @Column()
@@ -29,6 +29,7 @@ export class Account extends ObservableEntity {
       to: (value: number) => value,
       from: (value: string) => parseFloat(value),
     },
+    default: 0,
   })
   balance: number;
 
