@@ -30,8 +30,8 @@ nats stream add --config FILE_NAME.json
 ## Build
 
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -f services/account/Dockerfile -t giaduy/account:demo2 . --push
-docker buildx build --platform linux/amd64,linux/arm64 -f services/transaction/Dockerfile -t giaduy/transaction:demo2 . --push
+docker buildx build --platform linux/amd64,linux/arm64 -f services/account/Dockerfile -t giaduy/account:demo4 . --push
+docker buildx build --platform linux/amd64,linux/arm64 -f services/transaction/Dockerfile -t giaduy/transaction:demo4 . --push
 ```
 
 ## Publish Events

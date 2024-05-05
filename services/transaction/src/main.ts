@@ -12,8 +12,8 @@ async function bootstrap() {
 
   // Swagger
   const docConfig = new DocumentBuilder()
-    .setTitle('AccountService')
-    .setDescription('AccountService API description')
+    .setTitle('TransactionService')
+    .setDescription('TransactionService API description')
     .setVersion('1.0')
 
     .build();
