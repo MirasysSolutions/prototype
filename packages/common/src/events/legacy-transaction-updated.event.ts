@@ -1,7 +1,7 @@
 import { Topics } from './topics';
 
 interface LegacyTransactionUpdatedData {
-  id: string;
+  transactionNumber: string;
   note?: string;
   version: number;
 }

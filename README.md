@@ -30,14 +30,14 @@ nats stream add --config FILE_NAME.json
 ## Build
 
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -f services/account/Dockerfile -t giaduy/account:demo . --push
-docker buildx build --platform linux/amd64,linux/arm64 -f services/transaction/Dockerfile -t giaduy/transaction:demo . --push
+docker buildx build --platform linux/amd64,linux/arm64 -f services/account/Dockerfile -t giaduy/account:demo2 . --push
+docker buildx build --platform linux/amd64,linux/arm64 -f services/transaction/Dockerfile -t giaduy/transaction:demo2 . --push
 ```
 
 ## Publish Events
 
 ```bash
-nats pub legacyAccount.created --count=5 --sleep 1s '{"metadata":{"name":"legacyAccount.created"},"data":{"accountNumber":"FI123000{{Count}}","holderName":"Holder{{Count}}","holderPhone":"+358000{{Count}}","holderAddress":"Address{{Count}}","holderCountry":"FI","balance":0,"version":0}}'
+nats pub legacyAccount.created --count=5 --sleep 1s '{"metadata":{"name":"legacyAccount.created"},"data":{"accountNumber":"BE123000{{Count}}","holderName":"Holder{{Count}}","holderPhone":"+358000{{Count}}","holderAddress":"Address{{Count}}","holderCountry":"FI","balance":0,"version":0}}'
 
 nats pub legacyAccount.updated --count=5 --sleep 1s '{"metadata":{"name":"legacyAccount.created"},"data":{"accountNumber":"FI123000{{Count}}","holderName":"New Holder{{Count}}","holderPhone":"+1330000{{Count}}","holderAddress":"New Address{{Count}}","holderCountry":"US","balance":0,"version":1}}'
 

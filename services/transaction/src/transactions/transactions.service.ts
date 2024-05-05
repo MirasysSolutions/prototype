@@ -70,6 +70,10 @@ export class TransactionsService {
     return (await this.repo.delete({ id })).affected === 1;
   }
 
+  async truncate() {
+    await this.repo.clear();
+  }
+
   async sync(dto: SyncTransactionDto) {
     // check if the transaction exists
     const existing = await this.repo.findOne({ where: { id: dto.id } });

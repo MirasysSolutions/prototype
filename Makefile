@@ -1,7 +1,7 @@
 .PHONY: log-strapi log-web
 
 shell:
-	docker run -it --rm -p 4211:4211 -v $(shell pwd):/app -w /app node:20-alpine sh
+	docker run -it --rm -v $(shell pwd):/app -w /app node:20-alpine sh
 	
 log-account:
 	docker compose logs account -f

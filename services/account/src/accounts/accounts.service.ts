@@ -48,6 +48,10 @@ export class AccountsService {
     return (await this.repo.delete({ accountNumber })).affected === 1;
   }
 
+  async truncate() {
+    await this.repo.clear();
+  }
+
   async sync(dto: SyncAccountDto) {
     // sync account
     await this.repo.upsert(dto, ['accountNumber']);

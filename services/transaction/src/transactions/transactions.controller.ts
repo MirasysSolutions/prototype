@@ -50,6 +50,12 @@ export class TransactionsController {
     return this.transactionsService.remove(id);
   }
 
+  @Post('truncate')
+  async truncate() {
+    await this.transactionsService.truncate();
+    return { message: 'Truncated' };
+  }
+
   @EventPattern('transaction.sync')
   async handleTransactionSyncEvent(
     @Payload() event: TransactionSyncEvent,
@@ -58,7 +64,7 @@ export class TransactionsController {
     console.info('Event received', event);
     // sync transaction
     await this.transactionsService.sync({
-      id: event.data.id,
+      id: event.data.transactionNumber,
       accountNumber: event.data.accountNumber,
       amount: event.data.amount,
       date: event.data.date,
@@ -76,7 +82,7 @@ export class TransactionsController {
     console.info('Event received', event);
     // create new bank account
     await this.transactionsService.create({
-      id: event.data.id,
+      id: event.data.transactionNumber,
       accountNumber: event.data.accountNumber,
       amount: event.data.amount,
       note: event.data.note,
@@ -90,7 +96,7 @@ export class TransactionsController {
     @Ctx() context: JsMsg,
   ) {
     console.info('Event received', event);
-    await this.transactionsService.update(event.data.id, {
+    await this.transactionsService.update(event.data.transactionNumber, {
       note: event.data.note,
       version: event.data.version - 1,
     });

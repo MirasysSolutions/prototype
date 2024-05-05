@@ -14,7 +14,6 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { TransactionCreatedEvent } from 'common';
 import { LegacyAccountCreatedEvent } from 'common';
-import { version } from 'os';
 
 @Controller('accounts')
 export class AccountsController {
@@ -46,6 +45,12 @@ export class AccountsController {
   @Delete(':accountNumber')
   remove(@Param('accountNumber') accountNumber: string) {
     return this.accountsService.remove(accountNumber);
+  }
+
+  @Post('truncate')
+  async truncate() {
+    await this.accountsService.truncate();
+    return { message: 'Truncated' };
   }
 
   // subscribe to events
@@ -80,7 +85,7 @@ export class AccountsController {
       holderAddress: event.data.holderAddress,
       holderName: event.data.holderName,
       holderPhone: event.data.holderPhone,
-      holderCountry: event.data.holderCountry,
+      holderCountry: event.data.holderCountry ?? 'FI',
     });
     context.ack();
   }
@@ -111,7 +116,7 @@ export class AccountsController {
       holderAddress: event.data.holderAddress,
       holderName: event.data.holderName,
       holderPhone: event.data.holderPhone,
-      holderCountry: event.data.holderCountry,
+      holderCountry: event.data.holderCountry ?? 'FI',
       version: event.data.version,
     });
     context.ack();
